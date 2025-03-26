@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สุ่มเมนูอาหาร</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            text-align: center;
+            background-color: #ffebcd;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: inline-block;
+            width: 90%;
+            max-width: 400px; /* จำกัดขนาดสูงสุดเพื่อไม่ให้ใหญ่เกินไป */
+        }
+        h1 {
+            color: #ff4500;
+            font-size: 24px;
+        }
+        h2 {
+            font-size: 22px;
+            color: #008000;
+            margin: 20px 0;
+            transition: transform 0.8s ease-in-out;
+        }
+        .spin {
+            transform: rotate(360deg);
+        }
+        button {
+            padding: 12px;
+            font-size: 18px;
+            background-color: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+        }
+        button:hover {
+            background-color: #005f73;
+        }
+        select {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+            width: 100%;
+            max-width: 300px;
+        }
+
+        /* ✅ ปรับให้เหมาะกับมือถือ */
+        @media screen and (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            .container {
+                width: 100%;
+                padding: 15px;
+            }
+            h1 {
+                font-size: 20px;
+            }
+            h2 {
+                font-size: 18px;
+            }
+            button, select {
+                font-size: 16px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>สุ่มเมนูอาหาร</h1>
+        <label for="category">เลือกหมวดหมู่อาหาร:</label>
+        <select id="category">
+            <option value="all">ทั้งหมด</option>
+            <option value="ต้ม">ต้ม</option>
+            <option value="ผัด">ผัด</option>
+            <option value="แกง">แกง</option>
+            <option value="ทอด">ทอด</option>
+            <option value="ของกินเล่น">ของกินเล่น</option>
+            <option value="อาหารตามสั่ง">อาหารตามสั่ง</option>
+        </select>
+        <h2 id="menu">กดปุ่มเพื่อสุ่มเมนู!</h2>
+        <button onclick="randomMenu()">สุ่มเมนู</button>
+    </div>
+
+    <script>
+        const menus = {
+            "ต้ม": ["ต้มยำกุ้ง", "ต้มข่าไก่", "ต้มจืด", "ต้มแซ่บกระดูกหมู", "พะโล้", "ต้มโคล้ง", "กระเพาะปลา"],
+            "ผัด": ["ผัดกะเพรา", "ข้าวผัด", "ผัดผัก", "ผัดพริกแกง", "ผัดซีอิ๊ว", "ผัดเผ็ด", "ผัดขี้เมา", "ผัดวุ้นเส้น", "ผัดมะเขือยาว", "ผัดผักกาดดอง", "ข้าวผัดปลากะป๋อง", "ข้าวคลุกกะปิ"],
+            "แกง": ["แกงเขียวหวาน", "แกงส้มชะอม", "แกงมัสมั่น", "แกงป่า", "แกงเทโพ", "แกงส้ม", "แกงเผ็ด", "หลนปลาร้า", "แกงกะทิสายบัว", "แกงไก่หน่อไม้สด", "แกงเปรอะ", "แกงใต้"],
+            "ทอด": ["ไก่ทอด", "หมูทอดกระเทียม", "หมูทอดน้ำปลา", "ทอดมันกุ้ง", "ปลาทอด", "ไก่รวน", "ไข่ดาวทอด", "เกี๊ยวทอด", "ปลากะป๋องทอดกระเทียม", "ไข่เจียว", "ข้าวโพดทอดไส้นม", "ไก่แซ่บ", "ทอดพริกเกลือ"],
+            "ของกินเล่น": ["ส้มตำ", "ส้มตำทอด", "ผักทอด", "ขนมปังกรอบคาราเมล"], 
+            "อาหารตามสั่ง": ["ข้าวขาหมู", "ข้าวหมูกรอบ", "ข้าวหมูแดง", "ข้าวผัด", "ข้าวหมูทอดพริกเกลือ", "ข้าวหมูผัดกระเทียม", "ข้าวหมูผัดพริกเผา", "ข้าวหมูผัดขิง", "ข้าวหมูผัดพริกแกง", "ผัดกะเพรา", "ผัดขี้เมา", "ผัดซีอิ๊ว"]
+        };
+
+        function randomMenu() {
+            const category = document.getElementById("category").value;
+            let availableMenus = [];
+
+            if (category === "all") {
+                for (let key in menus) {
+                    availableMenus = availableMenus.concat(menus[key]);
+                }
+            } else {
+                availableMenus = menus[category];
+            }
+
+            if (availableMenus.length === 0) return;
+
+            const menuText = document.getElementById("menu");
+            menuText.classList.add("spin"); // เพิ่มเอฟเฟกต์หมุน
+
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * availableMenus.length);
+                menuText.innerText = availableMenus[randomIndex];
+                menuText.classList.remove("spin"); // เอาเอฟเฟกต์ออกเมื่อหมุนเสร็จ
+            }, 800); // รอ 0.8 วินาทีก่อนแสดงผล
+        }
+    </script>
+</body>
+</html>
+
